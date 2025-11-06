@@ -2,6 +2,7 @@ package com.github.mnkimkr.bookmanagementapi.controller;
 
 import com.github.mnkimkr.bookmanagementapi.model.Book;
 import com.github.mnkimkr.bookmanagementapi.service.BookService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 * It delegates all business logic to the BookService class
 * */
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 public class BookController {
 
     private final BookService bookService;
@@ -36,5 +37,26 @@ public class BookController {
     @PostMapping
     public Book addBook(@RequestBody Book book) {
         return bookService.addBook(book);
+    }
+
+    // Get a single book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return bookService.getBookById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Update book by ID
+    @PostMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+        return bookService.updateBook(id, updatedBook)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        boolean deleted = bookService.deleteBook(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

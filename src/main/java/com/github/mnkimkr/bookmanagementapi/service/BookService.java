@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 /*
@@ -39,4 +40,28 @@ public class BookService {
         books.add(book);
         return book;
     }
+
+
+    // Find a book with an ID
+    public Optional<Book> getBookById(Long id) {
+        return books.stream()
+                .filter(book -> book.getId().equals(id))
+                .findFirst();
+    }
+
+    // Update
+    public Optional<Book> updateBook(Long id, Book updatedBook) {
+        return getBookById(id).map(book -> {
+            book.setTitle(updatedBook.getTitle());
+            book.setAuthor(updatedBook.getAuthor());
+            book.setYear(updatedBook.getYear());
+            return book;
+        });
+    }
+
+    // Delete
+    public boolean deleteBook(Long id) {
+        return books.removeIf(book -> book.getId().equals(id));
+    }
+
 }
